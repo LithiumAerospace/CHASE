@@ -6,6 +6,8 @@
 #include <sys/un.h>
 #include <sys/socket.h>
 
+#include "../util/Log.h"
+
 namespace CHASE {
 	namespace CLICKS {
 		class Server {
@@ -29,6 +31,8 @@ namespace CHASE {
 			  char buffer[1025];
 
 				fd_set readfds;
+
+				logger log;
 
 				void newConn();
 				void onMessage(char* headbuf);

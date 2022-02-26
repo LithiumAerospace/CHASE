@@ -15,7 +15,8 @@
 
 namespace CHASE {
 	namespace CLICKS {
-		Server::Server() {
+		Server::Server() :
+				log(logger(std::cout, "CLICKS Server")){
 			for (int i = 0; i < max_clients; i++)
 		  {
 		    clients[i] = {0, 0, false};
@@ -36,7 +37,8 @@ namespace CHASE {
 		    perror("bind failed");
 		    exit(EXIT_FAILURE);
 		  }
-		  printf("Listening at %s\n", SOCK_PATH);
+
+		  log(LOG_INFO) << "Listening at " << SOCK_PATH << '\n';
 
 		  if (listen(master_socket, 8) < 0)
 		  {
@@ -103,14 +105,14 @@ namespace CHASE {
 			}
 
 			//inform user of socket number - used in send and receive commands
-			printf("New connection, socket fd is %d\n" , new_socket);
+			log(LOG_INFO) << "New connection, socket fd is " << new_socket << '\n';
 
 			//add new socket to array of sockets
 			for (int i = 0; i < max_clients; i++) {
 				//if position is empty
 				if (clients[i].fd == 0) {
 					clients[i].fd = new_socket;
-					printf("Adding to list of sockets as %d\n" , i);
+					log(LOG_INFO) << "Adding to list of sockets as " << i << '\n';
 					break;
 				}
 			}
@@ -141,7 +143,7 @@ namespace CHASE {
 						if(clients[i].fd == sd) {
 							memcpy(clients[i].name, msg.data, 16);
 							clients[i].ready = true;
-							printf("Client %s, fd %d, state %d\n", clients[i].name, clients[i].fd, clients[i].ready);
+							log(LOG_INFO) << "Client " << clients[i].name << "fd " << clients[i].fd << ", state " << clients[i].ready << '\n';
 							break;
 						}
 					}
@@ -153,7 +155,7 @@ namespace CHASE {
 		}
 
 		void Server::disconnect() {
-			printf("Host disconnected, socket fd is %d\n", sd);
+			log(LOG_INFO) << "Host disconnected, socket fd is " << sd << '\n';
 
 			close(sd);
 			for (int i = 0; i < max_clients; i++) {

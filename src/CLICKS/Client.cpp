@@ -17,7 +17,7 @@
 namespace CHASE {
   namespace CLICKS {
     Client::Client(char name[16]) {
-      m_name = name;
+    //  m_name = name;
       std::cout << "Client, Name: " << m_name << std::endl;
 
       struct sockaddr_un remote;
