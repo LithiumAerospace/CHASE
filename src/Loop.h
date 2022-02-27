@@ -6,6 +6,8 @@
 #include "CLICKS/CLICKS.h"
 #include "CLICKS/Client.h"
 
+#include "util/Log.h"
+
 namespace CHASE {
   struct LoopConf {
     char name[16];
@@ -34,6 +36,8 @@ namespace CHASE {
 
       bool m_ready;
       bool m_running;
+
+      logger log;
   };
 };
 

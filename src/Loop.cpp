@@ -8,7 +8,8 @@
 #include "CLICKS/Client.h"
 
 namespace CHASE {
-  Loop::Loop() {
+  Loop::Loop() :
+      log(logger(std::cout, "Main Loop")){
     m_ready = false;
     m_running = false;
   }
@@ -16,10 +17,10 @@ namespace CHASE {
   void Loop::init(LoopConf conf) {
     m_conf = conf;
 
-    std::cout << "Loop Initialization:" << std::endl;
-    std::cout << "  Name:      " << this->m_conf.name     << std::endl;
-    std::cout << "  Iter/Sync: " << this->m_conf.syncFreq << std::endl;
-    std::cout << "  Frequency: " << this->m_conf.freq     << " hz" << std::endl;
+    log(LOG_INFO) << "Loop Initialization:" << '\n';
+    log(LOG_INFO) << "  Name:      " << this->m_conf.name     << '\n';
+    log(LOG_INFO) << "  Iter/Sync: " << this->m_conf.syncFreq << '\n';
+    log(LOG_INFO) << "  Frequency: " << this->m_conf.freq     << " hz" << '\n';
 
     m_busConn  = new CLICKS::Client(m_conf.name);
 
@@ -28,7 +29,7 @@ namespace CHASE {
 
   void Loop::run() {
     if (m_ready == false) {
-      std::cout << "FATAL ERROR, not initialized" << std::endl;
+      log(LOG_ERROR) << "FATAL ERROR, not initialized" << '\n';
       return;
     }
 

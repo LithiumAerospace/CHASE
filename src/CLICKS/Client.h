@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "CLICKS.h"
+#include "../util/Log.h"
 
 namespace CHASE {
   namespace CLICKS {
@@ -19,6 +20,8 @@ namespace CHASE {
         unsigned int s;
 
         char m_name[16];
+
+        logger log;
     };
   };
 };

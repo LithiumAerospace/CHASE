@@ -14,29 +14,29 @@
 
 #include <stdint.h>
 
+#include "../util/Log.h"
+
 namespace CHASE {
   namespace CLICKS {
-    Client::Client(char name[16]) {
-    //  m_name = name;
-      std::cout << "Client, Name: " << m_name << std::endl;
+    Client::Client(char name[16]) :
+        log(logger(std::cout, "CLICKS Client")){
+      strcpy(m_name, name);
 
       struct sockaddr_un remote;
 
       if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-        perror("socket");
+        log(LOG_ERROR) << "socket error: " << strerror(errno) << '\n';
         exit(1);
       }
-
-      printf("Trying to connect...\n");
 
       remote.sun_family = AF_UNIX;
       strcpy(remote.sun_path, SOCK_PATH);
       if (connect(s, (struct sockaddr *)&remote, strlen(remote.sun_path) + sizeof(remote.sun_family)) == -1) {
-        perror("connect");
+        log(LOG_ERROR) << "connect error: " << strerror(errno) << '\n';
         exit(1);
       }
 
-      printf("Connected.\n");
+      log(LOG_INFO) << "Connected\n";
 
       Message msg;
       msg.type = MsgType::INIT;
@@ -48,6 +48,7 @@ namespace CHASE {
     }
 
     Client::~Client() {
+      log(LOG_DEBUG) << "Client::~Client()\n";
       close(s);
     }
 
@@ -58,7 +59,6 @@ namespace CHASE {
     }
 
     void Client::sendMsg(Message *msg) {
-      std::cout << "Sending... " << *msg << std::endl;
       void* buf = malloc(35 + msg->datalen);
 
       memcpy(buf, m_name, 16);
@@ -69,7 +69,7 @@ namespace CHASE {
 
       if(send(s, buf, 35+msg->datalen, 0) == -1) {
         free(buf);
-        perror("send");
+        log(LOG_ERROR) << "send error: " << strerror(errno) << '\n';
         exit(1);
       }
 

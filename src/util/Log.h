@@ -1,15 +1,10 @@
 #pragma once
 
-#include <algorithm>
 #include <chrono>
-#include <cmath>
-#include <ctime>
 #include <iomanip>
 #include <iostream>
-#include <memory>
 #include <sstream>
 #include <string>
-#include <vector>
 
 #define LOG_SILENT 0
 #define LOG_ERR 1
@@ -20,8 +15,6 @@
 #define LOG_DEBUG 4
 #define LOG_DEFAULT 4
 
-#define LOG_INIT_COUT(n) logger log(std::cout, n)
-
 #define BSLOG_DEBUG "[ DEBUG   ]"
 #define BSLOG_ERROR "\033[0;31m[ ERROR   ]\033[0;0m"
 #define BSLOG_WARNING "\033[0;33m[ WARNING ]\033[0;0m"
@@ -29,7 +22,6 @@
 
 class logger {
  public:
-  inline logger(std::ostream&, unsigned, std::string);
   inline logger(std::ostream&, std::string n);
   template <typename T>
   friend logger& operator<<(logger& l, const T& s);
@@ -68,15 +60,14 @@ logger::logger(std::ostream& f, std::string n)
     : _message_level(LOG_SILENT), _fac(f), _name(n) {
 }
 
-logger::logger(std::ostream& f, unsigned ll, std::string n)
-    : _message_level(LOG_SILENT), _fac(f), _name(n) {
-  _loglevel() = ll;
-}
-
 logger& logger::operator()(unsigned ll) {
   _message_level = ll;
   if (_message_level <= _loglevel()) {
-    _fac << prep_level(*this) << prep_time(*this) << prep_name(*this) << ": ";
+    std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+    std::time_t t = std::chrono::system_clock::to_time_t(now);
+    char ms[4];
+    sprintf(ms, "%03li", std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() % 1000);
+    _fac << prep_level(*this) << std::put_time(std::localtime(&t), " [%F %T.") << ms << "] [" << _name << "]: ";
   }
   return *this;
 }
@@ -100,30 +91,3 @@ std::string prep_level(logger& l) {
   }
   return "";
 }
-
-std::string prep_time(logger& l) {
-  time_t _now;
-  time(&_now);
-  struct tm* t;
-  t = localtime(&_now);
-  std::string s, m, h, D, M, Y;
-  s = std::to_string(t->tm_sec);
-  m = std::to_string(t->tm_min);
-  h = std::to_string(t->tm_hour);
-  D = std::to_string(t->tm_mday);
-  M = std::to_string(t->tm_mon + 1);
-  Y = std::to_string(t->tm_year + 1900);
-
-  if (t->tm_sec < 10) s = "0" + s;
-  if (t->tm_min < 10) m = "0" + m;
-  if (t->tm_hour < 10) h = "0" + h;
-  if (t->tm_mday < 10) D = "0" + D;
-  if (t->tm_mon + 1 < 10) M = "0" + M;
-
-  std::string ret =
-      " [" + Y + "-" + M + "-" + D + " " + h + ":" + m + ":" + s + "]";
-
-  return ret;
-}
-
-std::string prep_name(logger& l) { return " [" + l._name + "]"; }

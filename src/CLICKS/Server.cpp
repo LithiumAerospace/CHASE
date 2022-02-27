@@ -24,7 +24,7 @@ namespace CHASE {
 
 		  if((master_socket = socket(AF_UNIX, SOCK_STREAM, 0)) == 0)
 		  {
-		    perror("socket failed");
+		    log(LOG_ERROR) << "socket error: " << strerror(errno) << '\n';
 		    exit(EXIT_FAILURE);
 		  }
 
@@ -34,7 +34,7 @@ namespace CHASE {
 
 		  if (bind(master_socket, (struct sockaddr *)&address, sizeof(address))<0)
 		  {
-		    perror("bind failed");
+		    log(LOG_ERROR) << "bind error: " << strerror(errno) << '\n';
 		    exit(EXIT_FAILURE);
 		  }
 
@@ -42,7 +42,7 @@ namespace CHASE {
 
 		  if (listen(master_socket, 8) < 0)
 		  {
-		    perror("listen");
+		    log(LOG_ERROR) << "listen error: " << strerror(errno) << '\n';
 		    exit(EXIT_FAILURE);
 		  }
 		}
@@ -69,7 +69,7 @@ namespace CHASE {
 
 		    if ((activity < 0) && (errno!=EINTR))
 		    {
-		      printf("select error");
+		      log(LOG_ERROR) << "select error: " << strerror(errno) << '\n';
 		    }
 
 		    if (FD_ISSET(master_socket, &readfds))
@@ -81,13 +81,13 @@ namespace CHASE {
 		      sd = clients[i].fd;
 
 		      if (FD_ISSET( sd , &readfds)) {
-						char* headbuf;
+						char* headbuf = (char*) malloc(35);
 
-						valread = read(sd , headbuf, 35);
-		        if (valread == 0 || (valread == -1 && (errno == 104 || errno == 14))) { // Reset by peer
+						valread = read(sd, headbuf, 35);
+		        if (valread == 0 || (valread == -1 && errno == 104)) { // Reset by peer
 		          disconnect();
 		        } else if (valread == -1) {
-							perror("read");
+							log(LOG_ERROR) << "read error: " << strerror(errno) << '\n';
 						} else {
 		          onMessage(headbuf);
 		        }
@@ -100,19 +100,15 @@ namespace CHASE {
 		  int addrlen = sizeof(address);
 
 			if ((new_socket = accept(master_socket, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
-				perror("accept");
+				log(LOG_ERROR) << "accept error: " << strerror(errno) << '\n';
 				exit(EXIT_FAILURE);
 			}
-
-			//inform user of socket number - used in send and receive commands
-			log(LOG_INFO) << "New connection, socket fd is " << new_socket << '\n';
 
 			//add new socket to array of sockets
 			for (int i = 0; i < max_clients; i++) {
 				//if position is empty
 				if (clients[i].fd == 0) {
 					clients[i].fd = new_socket;
-					log(LOG_INFO) << "Adding to list of sockets as " << i << '\n';
 					break;
 				}
 			}
@@ -133,7 +129,7 @@ namespace CHASE {
 				disconnect();
 				return;
 			} else if (valread == -1) {
-				perror("read");
+				log(LOG_ERROR) << "read error: " << strerror(errno) << '\n';
 				return;
 			}
 
@@ -143,27 +139,29 @@ namespace CHASE {
 						if(clients[i].fd == sd) {
 							memcpy(clients[i].name, msg.data, 16);
 							clients[i].ready = true;
-							log(LOG_INFO) << "Client " << clients[i].name << "fd " << clients[i].fd << ", state " << clients[i].ready << '\n';
+							log(LOG_INFO) << "New Client " << clients[i].name << ", fd " << clients[i].fd << '\n';
 							break;
 						}
 					}
 					break;
 				default:
-					send(sd , buffer , 40, 0 ); // FIX
+					send(sd, buffer, 40, 0); // FIX
 					break;
 			}
 		}
 
 		void Server::disconnect() {
-			log(LOG_INFO) << "Host disconnected, socket fd is " << sd << '\n';
-
-			close(sd);
-			for (int i = 0; i < max_clients; i++) {
+			int i;
+			for (i = 0; i < max_clients; i++) {
 				if(clients[i].fd == sd) {
-					clients[i] = {0, 0, false};
 					break;
 				}
 			}
+
+			log(LOG_INFO) << "Client " << clients[i].name << " disconnected, fd " << sd << '\n';
+
+			close(sd);
+			clients[i] = {0, 0, false};
 		}
 	}
 }
