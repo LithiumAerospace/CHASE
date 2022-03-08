@@ -29,6 +29,8 @@ namespace CHASE {
       virtual CLICKS::Message* syncRqst() {return 0;};
       virtual void             syncRtrn(CLICKS::Message* update) {};
 
+      virtual void onMessage(CLICKS::Message* msg) {};
+
       CLICKS::Client* m_busConn;
 
     private:
@@ -38,6 +40,8 @@ namespace CHASE {
       bool m_running;
 
       logger log;
+
+      void recvMsg();
   };
 };
 
