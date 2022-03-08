@@ -1,5 +1,0 @@
-everything in CHASE namespace
-class names are UpperCamelCase
-class methods are lowerCamelCase
-variables are lowerCamelCase
-class members are prefixed with m_ (m_lowerCamelCase)
