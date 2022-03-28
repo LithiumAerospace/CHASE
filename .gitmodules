@@ -1,0 +1,3 @@
+[submodule "src/SpaceWire"]
+	path = src/SpaceWire
+	url = https://github.com/StellarSpaceSystems/SpaceWire

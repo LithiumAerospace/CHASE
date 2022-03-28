@@ -1,7 +1,3 @@
-src/CLICKS/CLICKS
-tests/test
-a.out
-
 build/
 build*/
 gtest/
