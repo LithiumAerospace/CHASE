@@ -8,6 +8,6 @@ include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake")
 set(FPRIME_CURRENT_BUILD_ROOT "${FPRIME_PROJECT_ROOT}")
 message(STATUS "F prime BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
 
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Svc/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CHASE/")
 
 #add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Top/")
