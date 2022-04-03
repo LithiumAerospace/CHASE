@@ -1,33 +1,53 @@
 module CHASE {
-  enum EPSStatus : U8 {
-    NOMINAL      = 0x00,
-    UNDERVOLT    = 0x01,
-    OVERVOLT     = 0x02,
-    OVERCURRENT  = 0x04
+  enum EPSItemStatus : U8 {
+    NOMINAL,
+    UNDERVOLTWARN,
+    UNDERVOLTERROR,
+    OVERVOLTWARN,
+    OVERVOLTERROR,
+    OVERCURRENTWARN,
+    OVERCURRENTERROR
   }
 
-  constant NumSwitches = 2
-  constant NumSwitchSetPorts = 8
-  constant NumVoltage = 2
-  constant NumCurrent = 2
+  enum EPSValueType : U8 {
+    VOLTAGE,
+    CURRENT
+  }
 
-  array F32x2 = [2] F32
+  struct EPSItemConfig {
+    $severity:    U8,
+    hasVoltage:  bool,
+    hasCurrent:  bool,
+    hasSwitch:   bool,
+    disableable: bool, @< Disable on overcurrent error
+    undervolterror:   F32,
+    undervoltwarn:    F32,
+    overvoltwarn:     F32,
+    overvolterror:    F32,
+    overcurrentwarn:  F32,
+    overcurrenterror: F32
+  } default {
+    overvoltwarn     = 999,
+    overvolterror    = 999,
+    overcurrentwarn  = 999,
+    overcurrenterror = 999
+  }
 
-  array EPSVoltageStatusArray = [NumVoltage] EPSStatus
-  array EPSCurrentStatusArray = [NumCurrent] EPSStatus
+  struct EPSItem {
+    switchState: Fw.Enabled,
+    voltage: F32,
+    current: F32,
+    status: EPSItemStatus
+  }
 
-  array EPSVoltageArray = [NumVoltage] F32
-  array EPSCurrentArray = [NumCurrent] F32
+  constant NumEPSItems = 8
 
-  array EPSVoltageConf    = [NumVoltage] F32x2
-  array EPSCurrentConf    = [NumCurrent] F32
+  array EPSItemArray       = [NumEPSItems] EPSItem
+  array EPSItemConfigArray = [NumEPSItems] EPSItemConfig
 
-  array EPSSwitchStateArray = [NumSwitches] Fw.Enabled
-
-  port Request ()
-  port F32Port ( value: F32 )
-  port EnabledPort ( enabled: Fw.Enabled )
-  port SwitchSet ( switchId: U8, enabled: Fw.Enabled)
+  port Request
+  port SwitchSet ( itemId: U8, enabled: Fw.Enabled )
+  port EPSDataPort ( itemId: U8, $type: EPSValueType, value: F32 )
 
   active component EPSController {
 
@@ -37,25 +57,11 @@ module CHASE {
 
     async input port run: Svc.Cycle
 
-    async input port switchSet: [NumSwitchSetPorts] SwitchSet
-    output port switchMsg: [NumSwitches] EnabledPort
+    async input port switchSet: SwitchSet
+    output port switchMsg: [NumEPSItems] SwitchSet
 
-    output port voltageRequest: [NumVoltage] Request
-    async input port voltage:  [NumVoltage] F32Port
-    match voltageRequest with voltage
-
-    output port currentRequest: [NumCurrent] Request
-    async input port current:  [NumCurrent] F32Port
-    match currentRequest with current
-
-    @ Command receive port
-    command recv port cmdIn
-
-    @ Command registration port
-    command reg port cmdRegOut
-
-    @ Command response port
-    command resp port cmdResponseOut
+    output port request: [NumEPSItems] Request
+    async input port data: EPSDataPort
 
     # -------------------------------------------------------------------------
     # Telemetry
@@ -67,26 +73,7 @@ module CHASE {
     @ Time get port
     time get port timeGetOut
 
-    telemetry switchState: EPSSwitchStateArray
-
-    telemetry voltageStatus: EPSVoltageStatusArray
-    telemetry voltage:       EPSVoltageArray
-
-    telemetry currentStatus: EPSCurrentStatusArray
-    telemetry current:       EPSCurrentArray
-
-    # -------------------------------------------------------------------------
-    # Parameters
-    # -------------------------------------------------------------------------
-
-    @ Parameter get port
-    param get port prmGetOut
-
-    @ Parameter set port
-    param set port prmSetOut
-
-    param voltageConf: EPSVoltageConf
-    param currentConf: EPSCurrentConf
+    telemetry itemStatus: EPSItemArray
 
   }
 }

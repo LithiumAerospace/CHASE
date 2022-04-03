@@ -1,13 +1,7 @@
 // ======================================================================
 // \title  EPSController/test/ut/Tester.hpp
-// \author nate
+// \author codeflight
 // \brief  hpp file for EPSController test harness implementation class
-//
-// \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
-//
 // ======================================================================
 
 #ifndef TESTER_HPP
@@ -15,6 +9,8 @@
 
 #include "GTestBase.hpp"
 #include "CHASE/EPS/EPSController.hpp"
+
+#include <CHASE/EPS/EPSItemConfigArrayArrayAc.hpp>
 
 namespace CHASE {
 
@@ -58,7 +54,7 @@ namespace CHASE {
 
       //! Handler for from_currentRequest
       //!
-      void from_currentRequest_handler(
+      void from_request_handler(
           const NATIVE_INT_TYPE portNum /*!< The port number*/
       );
 
@@ -66,13 +62,8 @@ namespace CHASE {
       //!
       void from_switchMsg_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U8 itemId,
           const Fw::Enabled &enabled
-      );
-
-      //! Handler for from_voltageRequest
-      //!
-      void from_voltageRequest_handler(
-          const NATIVE_INT_TYPE portNum /*!< The port number*/
       );
 
     private:

@@ -1,20 +1,15 @@
 // ======================================================================
 // \title  EPSController.hpp
-// \author nate
+// \author codeflight
 // \brief  hpp file for EPSController component implementation class
-//
-// \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
-//
 // ======================================================================
 
 #ifndef EPSController_HPP
 #define EPSController_HPP
 
 #include "CHASE/EPS/EPSControllerComponentAc.hpp"
-
+#include <CHASE/EPS/EPSItemArrayArrayAc.hpp>
+#include <CHASE/EPS/EPSItemConfigArrayArrayAc.hpp>
 #include <CHASE/EPS/FppConstantsAc.hpp>
 
 namespace CHASE {
@@ -39,7 +34,8 @@ namespace CHASE {
       //!
       void init(
           const NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
-          const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
+          const NATIVE_INT_TYPE instance = 0, /*!< The instance number*/
+          EPSItemConfigArray config = EPSItemConfigArray()
       );
 
       //! Destroy object EPSController
@@ -52,10 +48,12 @@ namespace CHASE {
       // Handler implementations for user-defined typed input ports
       // ----------------------------------------------------------------------
 
-      //! Handler implementation for current
+      //! Handler implementation for data
       //!
-      void current_handler(
+      void data_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U8 itemId,
+          const EPSValueType& type,
           F32 value
       );
 
@@ -63,9 +61,7 @@ namespace CHASE {
       //!
       void run_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Svc::TimerVal &cycleStart /*!<
-      Cycle start timer value
-      */
+          Svc::TimerVal &cycleStart /*!< Cycle start timer value*/
       );
 
       //! Handler implementation for switchSet
@@ -76,20 +72,8 @@ namespace CHASE {
           const Fw::Enabled &enabled
       );
 
-      //! Handler implementation for voltage
-      //!
-      void voltage_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          F32 value
-      );
-
-      EPSSwitchStateArray switchState;
-
-      EPSVoltageStatusArray voltageStatus;
-      EPSVoltageArray       voltage;
-
-      EPSCurrentStatusArray currentStatus;
-      EPSCurrentArray       current;
+      EPSItemArray items;
+      EPSItemConfigArray config;
 
     };
 
