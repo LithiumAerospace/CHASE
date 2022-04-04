@@ -7,10 +7,10 @@
 #ifndef EPSController_HPP
 #define EPSController_HPP
 
-#include "CHASE/EPS/EPSControllerComponentAc.hpp"
-#include <CHASE/EPS/EPSItemArrayArrayAc.hpp>
-#include <CHASE/EPS/EPSItemConfigArrayArrayAc.hpp>
-#include <CHASE/EPS/FppConstantsAc.hpp>
+#include <EPS/EPSControllerComponentAc.hpp>
+#include <EPS/EPSItemArrayArrayAc.hpp>
+#include <EPS/EPSItemConfigArrayArrayAc.hpp>
+#include <EPS/FppConstantsAc.hpp>
 
 namespace CHASE {
 

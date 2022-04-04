@@ -5,10 +5,10 @@
 // ======================================================================
 
 
-#include <CHASE/EPS/EPSController.hpp>
+#include <EPS/EPSController.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 
-#include <CHASE/EPS/EPSItemStatusEnumAc.hpp>
+#include <EPS/EPSItemStatusEnumAc.hpp>
 
 namespace CHASE {
 

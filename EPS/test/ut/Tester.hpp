@@ -8,9 +8,9 @@
 #define TESTER_HPP
 
 #include "GTestBase.hpp"
-#include "CHASE/EPS/EPSController.hpp"
+#include <EPS/EPSController.hpp>
 
-#include <CHASE/EPS/EPSItemConfigArrayArrayAc.hpp>
+#include <EPS/EPSItemConfigArrayArrayAc.hpp>
 
 namespace CHASE {
 
