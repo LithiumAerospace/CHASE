@@ -40,8 +40,6 @@ module CHASE {
     status: EPSItemStatus
   }
 
-  constant NumEPSItems = 8
-
   array EPSItemArray       = [NumEPSItems] EPSItem
   array EPSItemConfigArray = [NumEPSItems] EPSItemConfig
 
@@ -56,6 +54,8 @@ module CHASE {
     # -------------------------------------------------------------------------
 
     async input port run: Svc.Cycle
+
+    output port status: SubsystemStatusPort
 
     async input port switchSet: SwitchSet
     output port switchMsg: [NumEPSItems] SwitchSet
