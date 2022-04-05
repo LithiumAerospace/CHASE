@@ -45,6 +45,7 @@ module Test {
     instance uplink
     instance systemResources
     instance linuxTimer
+    instance vehicleController
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers

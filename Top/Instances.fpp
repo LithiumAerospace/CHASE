@@ -207,7 +207,7 @@ module Test {
   @ Communications driver. May be swapped with other comm drivers like UART
   @ Note: Here we have TCP reliable uplink and UDP (low latency) downlink
   instance comm: Drv.ByteStreamDriverModel base id 0x4000 \
-    at "../../../../fprime/Drv/TcpClient/TcpClient.hpp" \
+    at "../../../fprime/Drv/TcpClient/TcpClient.hpp" \
   {
 
     phase Fpp.ToCpp.Phases.instances """
@@ -292,7 +292,7 @@ module Test {
   }
 
   instance linuxTime: Svc.Time base id 0x4500 \
-    at "../../../../fprime/Svc/LinuxTime/LinuxTime.hpp" \
+    at "../../../fprime/Svc/LinuxTime/LinuxTime.hpp" \
   {
 
     phase Fpp.ToCpp.Phases.instances """
@@ -334,5 +334,9 @@ module Test {
   }
 
   instance systemResources: Svc.SystemResources base id 0x4B00
+
+  instance vehicleController: CHASE.VehicleController base id 0x4C00 \
+    queue size Default.queueSize \
+    stack size Default.stackSize
 
 }
