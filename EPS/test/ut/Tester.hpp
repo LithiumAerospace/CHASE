@@ -66,6 +66,11 @@ namespace CHASE {
           const Fw::Enabled &enabled
       );
 
+      void from_status_handler(
+          const NATIVE_INT_TYPE portNum,
+          const SubsystemStatus& status
+      );
+
     private:
 
       // ----------------------------------------------------------------------

@@ -118,6 +118,15 @@ namespace CHASE {
     this->pushFromPortEntry_switchMsg(itemId, enabled);
   }
 
+  void Tester ::
+    from_status_handler(
+        const NATIVE_INT_TYPE portNum,
+        const SubsystemStatus& status
+    )
+  {
+    this->pushFromPortEntry_status(status);
+  }
+
   // ----------------------------------------------------------------------
   // Helper methods
   // ----------------------------------------------------------------------
